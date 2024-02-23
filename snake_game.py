@@ -53,17 +53,52 @@ class Food:
 
 # direction management
         
-def next_move():
-    pass
+def next_move(snake, food):
+    x, y = snake.coordinates[0]
 
-    # we will add square in the beginning of move
+    # changing assigned coords based on direction
+
+    if dir == 'UP':
+        y -= SPACE_SIZE
+    elif dir == 'DOWN':
+        y += SPACE_SIZE
+    elif dir == 'LEFT':
+        x -= SPACE_SIZE
+    elif dir == 'RIGHT':
+        x += SPACE_SIZE
+
+    snake.coordinates.insert(0, (x, y))
+
+    # adding a square
+    square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR, tags='snake')
+    snake.squares.insert(0, square)
 
     # if snake eats food in current move:
         # delete old food, generate new
     # else we will delete the square that we added
 
+    window.after(SPEED, next_move, snake, food)
+
+
 def change_direction(new_dir):
-    pass
+    global dir
+    # basically contradiction checking
+
+    if new_dir == 'LEFT':
+        if dir != 'RIGHT':
+            dir = new_dir
+
+    elif new_dir == 'RIGHT':
+        if dir != 'LEFT':
+            dir = new_dir
+    
+    elif new_dir == 'UP':
+        if dir != 'DOWN':
+            dir = new_dir
+    
+    elif new_dir == 'DOWN':
+        if dir != 'UP':
+            dir = new_dir
 
 
 # game over funcs
@@ -94,7 +129,7 @@ label.pack()
 canvas = Canvas(window, width=GAME_WIDTH, height=GAME_HEIGHT, bg=BG_COLOR)
 canvas.pack()
 
-window.update() # !
+window.update()
 
 # centering the window
 window_width = window.winfo_width()
@@ -108,7 +143,17 @@ y = int(screen_height / 2) - int(window_height / 2)
 window.geometry(f'{window_width}x{window_height}+{x}+{y}')
 
 
+# direction binds
+window.bind('<Left>', lambda event: change_direction('LEFT'))
+window.bind('<Right>', lambda event: change_direction('RIGHT'))
+window.bind('<Up>', lambda event: change_direction('UP'))
+window.bind('<Down>', lambda event: change_direction('DOWN'))
+
+
+# The beginning of the game
 snake = Snake()
 food = Food()
+
+next_move(snake, food)
 
 window.mainloop()
