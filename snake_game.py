@@ -51,6 +51,24 @@ class Food:
         canvas.create_oval(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=FOOD_COLOR, tags='food')
 
 
+# some rank system for fun
+def rank(score):
+    if score < 6:
+        return 'LOSER', '#8d0c13'
+    elif 6 <= score < 11:
+        return 'L', '#ed2b37'
+    elif 11 <= score < 14:
+        return 'Wanna ragequit??', '#eb1421'
+    elif 14 <= score < 18:
+        return 'DOG WATER', '#5bcefa'
+    elif 18 <= score < 22:
+        return 'GOOD', '#3db919'
+    elif score >= 22:
+        return 'KILLIN` IT!', '#83aeb9'
+    elif score >= 27:
+        return 'SSS', '#edcc19'
+
+
 # direction management
         
 def next_move(snake, food):
@@ -81,7 +99,7 @@ def next_move(snake, food):
         score += 1
         SPEED -= 3
 
-        label.config(text=f'Score: {score}')
+        label.config(text=f'Score: {score} - {rank(score)[0]}')
 
         canvas.delete('food')
         food = Food()
@@ -91,8 +109,12 @@ def next_move(snake, food):
         canvas.delete(snake.squares[-1])
         del snake.squares[-1]
 
-    # basically goes to check another move after SPEED ms
-    window.after(SPEED, next_move, snake, food)
+
+    if check_collisions(snake):
+        game_over()
+    else:
+        # basically goes to another move after SPEED ms if no collisions
+        window.after(SPEED, next_move, snake, food)
 
 
 def change_direction(new_dir):
@@ -119,10 +141,24 @@ def change_direction(new_dir):
 # game over funcs
 
 def check_collisions(snake):
-    pass
+    x, y = snake.coordinates[0]
+
+    # borders check
+    if (x < 0 or x >= GAME_WIDTH) or (y < 0 or y >= GAME_HEIGHT):
+        return True
+    
+    # checking if there`s no clash with tail
+    for body_part in snake.coordinates[1:]:
+        if x == body_part[0] and y == body_part[1]:
+            return True
+    
+    return False
 
 def game_over():
-    pass
+    canvas.delete(ALL)
+    user_rank = rank(score)
+
+    canvas.create_text(canvas.winfo_width() / 2, canvas.winfo_height() / 2, font=('comic-sans', 60), text=user_rank[0], fill=user_rank[1], tag='game_over')
 
 
 # ----------------------------------------- Main game --------------------------------------
