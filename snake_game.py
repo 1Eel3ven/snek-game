@@ -30,20 +30,37 @@ class Snake:
         # stores body parts as squares
         self.squares = []
 
+        
+        # initializing starting body parts
+        for i in range(BODY_PARTS):
+            self.coordinates.append([0, 0])
+
+        for x, y in self.coordinates:
+            square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR, tags='snake')
+            self.squares.append(square)
 
 class Food:
     def __init__(self):
-        # coords
-        x = None
-        y = None
+        # separating the canvas into cells, and picking random cell
+        x = randint(0, (GAME_WIDTH / SPACE_SIZE - 1)) * SPACE_SIZE
+        y = randint(0, (GAME_HEIGHT / SPACE_SIZE - 1)) * SPACE_SIZE
 
         self.coordinates = (x, y)
+
+        # oval with cell size
+        canvas.create_oval(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=FOOD_COLOR, tags='food')
 
 
 # direction management
         
 def next_move():
     pass
+
+    # we will add square in the beginning of move
+
+    # if snake eats food in current move:
+        # delete old food, generate new
+    # else we will delete the square that we added
 
 def change_direction(new_dir):
     pass
@@ -90,5 +107,8 @@ y = int(screen_height / 2) - int(window_height / 2)
 
 window.geometry(f'{window_width}x{window_height}+{x}+{y}')
 
+
+snake = Snake()
+food = Food()
 
 window.mainloop()
