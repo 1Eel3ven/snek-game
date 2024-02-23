@@ -73,10 +73,25 @@ def next_move(snake, food):
     square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR, tags='snake')
     snake.squares.insert(0, square)
 
-    # if snake eats food in current move:
-        # delete old food, generate new
-    # else we will delete the square that we added
+    
+    if x == food.coordinates[0] and y == food.coordinates[1]:
+        # if coordinates of food equal to snake`s head coordinates
+        # then we update score and speed, delete food and make new
+        global score, SPEED
+        score += 1
+        SPEED -= 3
 
+        label.config(text=f'Score: {score}')
+
+        canvas.delete('food')
+        food = Food()
+    else:
+        # if food wasnt eaten in current move, delete last square
+        del snake.coordinates[-1]
+        canvas.delete(snake.squares[-1])
+        del snake.squares[-1]
+
+    # basically goes to check another move after SPEED ms
     window.after(SPEED, next_move, snake, food)
 
 
